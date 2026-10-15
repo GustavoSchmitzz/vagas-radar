@@ -42,12 +42,10 @@ flowchart TD
     CLI["CLI / Daemon Runner"] --> Sched["Scheduler / Engine Concorrente"]
     Sched -->|Goroutines com Pool| Src["JobSource (Interface)"]
     
-    subgraph Fontes de Oportunidades
-        Src --> S1["GitHub Issues (backend-br)"]
-        Src --> S2["GitHub Issues (frontendbr)"]
-        Src --> S3["GitHub Issues (react-brasil)"]
-        Src --> S4["GitHub Issues (qa-brasil)"]
-        Src --> S5["Feeds de Processos Seletivos"]
+    subgraph Fontes Integradas (23 Provedores)
+        Src --> S1["20 Comunidades GitHub BR (Backend, Frontend, Data, QA, Mobile, etc.)"]
+        Src --> S2["Remotive API Oficial (Worldwide / LATAM / Brasil)"]
+        Src --> S3["Canais RSS de Tecnologia (WeWorkRemotely, WorkingNomads)"]
     end
 
     Src -->|Vagas Brutas| Pipe["Pipeline de Triagem (Engine)"]
@@ -65,6 +63,23 @@ flowchart TD
     Hash --> Repo["Repositório PostgreSQL"]
     Repo -->|Registro Novo| Notif["Terminal Notifier (Badges Coloridos)"]
 ```
+
+---
+
+## 📡 Catálogo de Fontes Integradas (23 Fontes Ativas)
+
+O Job Radar monitora ativamente as principais comunidades abertas e plataformas de TI:
+
+| Categoria | Fontes Conectadas | Foco Tecnológico |
+| :--- | :--- | :--- |
+| **Backend & Sistemas** | `backend-br/vagas`, `soujava/vagas-java`, `dotnetdevbr/vagas`, `nodejsdevbr/vagas`, `clj-br/vagas`, `phpdevbr/vagas` | Go, Java/Spring, .NET, Node, Clojure, PHP |
+| **Frontend & Web** | `frontendbr/vagas`, `react-brasil/vagas`, `vuejs-br/vagas` | React, Vue, TypeScript, Next.js, Web |
+| **Mobile** | `flutterbr/vagas`, `androiddevbr/vagas` | Flutter/Dart, Android Nativo/Kotlin |
+| **Dados & IA** | `datascience-br/vagas` | Ciência de Dados, Engenharia de Dados, Python |
+| **Qualidade & DevOps** | `qa-brasil/vagas`, `DevOps-Brasil/Vagas` | Testes automatizados, QA, Cloud, Docker, CI/CD |
+| **Design, Produto & Web3** | `uxbrasil/vagas`, `remotejobsbr/design-ux-vagas`, `web3br/vagas` | UI/UX, Design de Produto, Web3 |
+| **Comunidades Gerais BR** | `techmagiccube/vagas`, `VagasBR/desenvolvedores`, `developersRJ/vagas` | Hubs amplos com centenas de oportunidades |
+| **APIs e Feeds Remotos** | `Remotive API`, `WeWorkRemotely RSS`, `WorkingNomads RSS` | Vagas remotas elegíveis para o Brasil e LATAM |
 
 ---
 

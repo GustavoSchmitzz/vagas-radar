@@ -31,6 +31,7 @@ type GitHubSource struct {
 	repo       string
 	apiBaseURL string
 	client     *http.Client
+	token      string
 }
 
 // NewGitHubSource cria uma fonte para um repositório GitHub público (ex: "backend-br", "vagas").
@@ -45,6 +46,11 @@ func NewGitHubSource(owner, repo string, client *http.Client) *GitHubSource {
 		apiBaseURL: "https://api.github.com",
 		client:     client,
 	}
+}
+
+// SetToken define o token de autenticação pessoal (PAT) para aumentar o rate limit de 60 para 5.000 req/h.
+func (s *GitHubSource) SetToken(token string) {
+	s.token = strings.TrimSpace(token)
 }
 
 // SetBaseURL permite sobrescrever a URL base para testes unitários com httptest.Server.
@@ -68,6 +74,9 @@ func (s *GitHubSource) Fetch(ctx context.Context) ([]domain.RawJob, error) {
 
 	req.Header.Set("Accept", "application/vnd.github.v3+json")
 	req.Header.Set("User-Agent", "vagas-radar/1.0")
+	if s.token != "" {
+		req.Header.Set("Authorization", "Bearer "+s.token)
+	}
 
 	resp, err := s.client.Do(req)
 	if err != nil {

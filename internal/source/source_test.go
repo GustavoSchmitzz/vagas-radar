@@ -126,3 +126,92 @@ func TestRegistry(t *testing.T) {
 		t.Errorf("esperava 2 fontes no registry, obteve %d", len(all))
 	}
 }
+
+func TestRemotiveSource_Fetch(t *testing.T) {
+	mockJSON := `{
+		"jobs": [
+			{
+				"id": 5001,
+				"url": "https://remotive.com/job/5001",
+				"title": "Software Engineer Intern",
+				"company_name": "Global Corp",
+				"candidate_required_location": "Worldwide",
+				"job_type": "internship",
+				"publication_date": "2026-10-15T10:00:00",
+				"description": "Internship opportunity for university students."
+			},
+			{
+				"id": 5002,
+				"url": "https://remotive.com/job/5002",
+				"title": "Developer",
+				"company_name": "Local US Corp",
+				"candidate_required_location": "USA Only",
+				"job_type": "full_time",
+				"publication_date": "2026-10-15T10:00:00",
+				"description": "US only."
+			}
+		]
+	}`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(mockJSON))
+	}))
+	defer server.Close()
+
+	src := NewRemotiveSource(server.Client())
+	src.SetAPIURL(server.URL)
+
+	jobs, err := src.Fetch(context.Background())
+	if err != nil {
+		t.Fatalf("erro ao executar Fetch no Remotive: %v", err)
+	}
+
+	// Apenas a vaga Worldwide deve ser aceita (a vaga USA Only deve ser descartada pelo coletor)
+	if len(jobs) != 1 {
+		t.Fatalf("esperava 1 vaga filtrada pelo Remotive, obteve %d", len(jobs))
+	}
+
+	if jobs[0].Company != "Global Corp" {
+		t.Errorf("empresa inesperada: %s", jobs[0].Company)
+	}
+}
+
+func TestRSSSource_Fetch(t *testing.T) {
+	mockXML := `<?xml version="1.0" encoding="UTF-8"?>
+	<rss version="2.0">
+	  <channel>
+	    <title>Tech Remote Jobs</title>
+	    <item>
+	      <title>Tech Startup: Backend Software Intern</title>
+	      <link>https://weworkremotely.com/jobs/123</link>
+	      <description>Estágio para estudantes de graduação.</description>
+	      <pubDate>Thu, 15 Oct 2026 12:00:00 GMT</pubDate>
+	    </item>
+	  </channel>
+	</rss>`
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/xml")
+		w.Write([]byte(mockXML))
+	}))
+	defer server.Close()
+
+	src := NewRSSSource("weworkremotely", server.URL, server.Client())
+
+	jobs, err := src.Fetch(context.Background())
+	if err != nil {
+		t.Fatalf("erro no RSS Fetch: %v", err)
+	}
+
+	if len(jobs) != 1 {
+		t.Fatalf("esperava 1 vaga coletada do RSS, obteve %d", len(jobs))
+	}
+
+	if jobs[0].Company != "Tech Startup" {
+		t.Errorf("empresa incorreta extraída do RSS: %s", jobs[0].Company)
+	}
+	if jobs[0].Title != "Backend Software Intern" {
+		t.Errorf("título incorreto extraído do RSS: %s", jobs[0].Title)
+	}
+}

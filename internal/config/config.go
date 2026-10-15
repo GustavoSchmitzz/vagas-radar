@@ -58,9 +58,10 @@ type SchedulerConfig struct {
 
 // Config agrega todas as configurações da aplicação.
 type Config struct {
-	Database  DatabaseConfig
-	Filter    FilterConfig
-	Scheduler SchedulerConfig
+	Database    DatabaseConfig
+	Filter      FilterConfig
+	Scheduler   SchedulerConfig
+	GitHubToken string
 }
 
 // LoadConfig carrega as configurações com valores padrão seguros, sobrescrevendo
@@ -92,6 +93,7 @@ func LoadConfig() *Config {
 			Interval:       getEnvAsDuration("SCAN_INTERVAL", 2*time.Hour),
 			RequestTimeout: getEnvAsDuration("REQUEST_TIMEOUT", 30*time.Second),
 		},
+		GitHubToken: getEnv("GITHUB_TOKEN", ""),
 	}
 }
 
