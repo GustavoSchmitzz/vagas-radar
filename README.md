@@ -172,13 +172,19 @@ Consulta e exibe no terminal as últimas vagas salvas no banco de dados:
 ./job-radar -list -limit 30
 ```
 
-### 3. Incluir Vagas de Outras Senioridades / CLT (`-include-all`)
+### 3. Abrir uma Vaga no Navegador (`-open <ID>`)
+Abre diretamente a página de inscrição/issue da vaga no navegador:
+```bash
+./job-radar -open 1
+```
+
+### 4. Incluir Vagas de Outras Senioridades / CLT (`-include-all`)
 Caso queira relaxar o filtro de estágio para ver também vagas Júnior, Pleno ou CLT:
 ```bash
 ./job-radar -scan -include-all
 ```
 
-### 4. Modo Daemon Contínuo (`-daemon`)
+### 5. Modo Daemon Contínuo (`-daemon`)
 Executa o processo continuamente em segundo plano, rodando uma varredura inicial e repetindo periodicamente:
 ```bash
 ./job-radar -daemon -interval 2h
@@ -192,6 +198,7 @@ Executa o processo continuamente em segundo plano, rodando uma varredura inicial
 | :--- | :--- | :--- | :--- |
 | `-scan` | `bool` | `false` | Dispara uma varredura imediata e encerra. |
 | `-list` | `bool` | `false` | Lista as oportunidades salvas no PostgreSQL. |
+| `-open` | `int` | `0` | Abre a vaga especificada pelo ID no navegador padrão. |
 | `-limit` | `int` | `15` | Quantidade de vagas a exibir com `-list`. |
 | `-daemon` | `bool` | `false` | Inicia em modo contínuo (serviço). |
 | `-interval`| `string`| `2h` | Intervalo do daemon (ex: `30m`, `1h`, `2h`). |

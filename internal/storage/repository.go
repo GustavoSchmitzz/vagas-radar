@@ -15,6 +15,9 @@ type JobRepository interface {
 	// ListRecent retorna as oportunidades cadastradas mais recentes.
 	ListRecent(ctx context.Context, limit int) ([]domain.Job, error)
 
+	// GetByID busca uma oportunidade específica pelo ID.
+	GetByID(ctx context.Context, id int64) (*domain.Job, error)
+
 	// Count retorna a contagem total de vagas salvas no banco.
 	Count(ctx context.Context) (int64, error)
 

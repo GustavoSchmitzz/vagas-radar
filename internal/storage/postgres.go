@@ -198,6 +198,53 @@ func (r *PostgresRepository) ListRecent(ctx context.Context, limit int) ([]domai
 	return jobs, nil
 }
 
+// GetByID busca uma oportunidade específica pelo ID no PostgreSQL.
+func (r *PostgresRepository) GetByID(ctx context.Context, id int64) (*domain.Job, error) {
+	query := `
+	SELECT
+		id, hash, title, company, description, url, source,
+		city, state, country, location_raw,
+		work_mode, opportunity_type, seniority, contract_type,
+		published_at, created_at, updated_at
+	FROM jobs
+	WHERE id = $1;
+	`
+
+	var j domain.Job
+	var workMode, oppType, seniority, contractType string
+
+	err := r.pool.QueryRow(ctx, query, id).Scan(
+		&j.ID,
+		&j.Hash,
+		&j.Title,
+		&j.Company,
+		&j.Description,
+		&j.URL,
+		&j.Source,
+		&j.Location.City,
+		&j.Location.State,
+		&j.Location.Country,
+		&j.Location.Raw,
+		&workMode,
+		&oppType,
+		&seniority,
+		&contractType,
+		&j.PublishedAt,
+		&j.CreatedAt,
+		&j.UpdatedAt,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("vaga #%d não encontrada: %w", id, err)
+	}
+
+	j.WorkMode = domain.WorkMode(workMode)
+	j.OpportunityType = domain.OpportunityType(oppType)
+	j.Seniority = domain.Seniority(seniority)
+	j.ContractType = domain.ContractType(contractType)
+
+	return &j, nil
+}
+
 // Count retorna o número total de oportunidades cadastradas.
 func (r *PostgresRepository) Count(ctx context.Context) (int64, error) {
 	var total int64

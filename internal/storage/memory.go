@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"sync"
 	"time"
@@ -72,6 +73,19 @@ func (m *MemoryRepository) ListRecent(ctx context.Context, limit int) ([]domain.
 	}
 
 	return list, nil
+}
+
+// GetByID busca uma vaga específica pelo ID em memória.
+func (m *MemoryRepository) GetByID(ctx context.Context, id int64) (*domain.Job, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	for _, j := range m.jobs {
+		if j.ID == id {
+			return &j, nil
+		}
+	}
+	return nil, fmt.Errorf("vaga #%d não encontrada", id)
 }
 
 // Count retorna o total de registros armazenados.
