@@ -1,0 +1,27 @@
+[Unit]
+Description=Radar de Vagas de Estágio e Processos Seletivos (Job Radar Daemon)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Vagas
+ExecStart=%h/Vagas/job-radar -daemon -interval 2h
+Restart=on-failure
+RestartSec=15s
+
+# Carrega variáveis do arquivo .env (se existir)
+EnvironmentFile=-%h/Vagas/.env
+
+# Variáveis padrão de fallback
+Environment="POSTGRES_HOST=localhost"
+Environment="POSTGRES_PORT=5432"
+Environment="POSTGRES_USER=postgres"
+Environment="POSTGRES_DB=vagas_radar"
+Environment="STRICT_INTERNSHIP_ONLY=true"
+
+# Limites de recursos para manter o processo ultraleve
+CPUQuota=10%
+MemoryMax=64M
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,36 @@
+# Binários compilados
+job-radar
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# Variáveis de ambiente e segredos locais
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs e arquivos de execução
+*.log
+logs/
+
+# Arquivos de dados temporários
+*.db
+*.sqlite
+*.sqlite3
+
+# Arquivos de IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Cobertura de testes e perfil de cpu/mem
+*.out
+*.prof
