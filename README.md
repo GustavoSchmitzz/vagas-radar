@@ -42,15 +42,15 @@ flowchart TD
     CLI["CLI / Daemon Runner"] --> Sched["Scheduler / Engine Concorrente"]
     Sched -->|Goroutines com Pool| Src["JobSource (Interface)"]
     
-    subgraph Fontes Integradas (23 Provedores)
+    subgraph "Fontes Integradas - 22 Provedores"
         Src --> S1["20 Comunidades GitHub BR (Backend, Frontend, Data, QA, Mobile, etc.)"]
         Src --> S2["Remotive API Oficial (Worldwide / LATAM / Brasil)"]
-        Src --> S3["Canais RSS de Tecnologia (WeWorkRemotely, WorkingNomads)"]
+        Src --> S3["Canais RSS de Tecnologia (WeWorkRemotely)"]
     end
 
     Src -->|Vagas Brutas| Pipe["Pipeline de Triagem (Engine)"]
 
-    subgraph Validação de Negócio
+    subgraph "Validacao de Negocio"
         Pipe --> R1{"É Estágio / Processo Seletivo?"}
         R1 -- Não --> Disc["Descartada"]
         R1 -- Sim --> R2{"Localização Compatível?"}
@@ -66,7 +66,7 @@ flowchart TD
 
 ---
 
-## 📡 Catálogo de Fontes Integradas (23 Fontes Ativas)
+## 📡 Catálogo de Fontes Integradas (22 Fontes Ativas)
 
 O Job Radar monitora ativamente as principais comunidades abertas e plataformas de TI:
 
