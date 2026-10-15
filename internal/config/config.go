@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
@@ -65,8 +66,11 @@ type Config struct {
 }
 
 // LoadConfig carrega as configurações com valores padrão seguros, sobrescrevendo
-// com variáveis de ambiente quando presentes.
+// com variáveis de ambiente e valores do arquivo .env quando presentes.
 func LoadConfig() *Config {
+	loadDotEnv(".env")
+	loadDotEnv("../.env")
+
 	return &Config{
 		Database: DatabaseConfig{
 			Host:     getEnv("POSTGRES_HOST", getEnv("PGHOST", "localhost")),
@@ -133,4 +137,29 @@ func getEnvAsDuration(key string, defaultVal time.Duration) time.Duration {
 		}
 	}
 	return defaultVal
+}
+
+// loadDotEnv lê um arquivo .env simples e injeta as variáveis no ambiente
+func loadDotEnv(filepath string) {
+	file, err := os.Open(filepath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) == 2 {
+			key := strings.TrimSpace(parts[0])
+			val := strings.Trim(strings.TrimSpace(parts[1]), "\"'")
+			if _, exists := os.LookupEnv(key); !exists && key != "" {
+				os.Setenv(key, val)
+			}
+		}
+	}
 }

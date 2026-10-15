@@ -84,6 +84,10 @@ func (s *GitHubSource) Fetch(ctx context.Context) ([]domain.RawJob, error) {
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusForbidden {
+		return nil, fmt.Errorf("limite de taxa da API do GitHub atingido (403 rate limit). Defina GITHUB_TOKEN no seu .env para liberar 5.000 requisições/hora")
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("resposta inesperada da API do GitHub (%s): status %d", s.name, resp.StatusCode)
 	}
